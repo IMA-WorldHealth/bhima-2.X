@@ -70,6 +70,7 @@ blocks:
             - env_var: MYSQL_VERSION
               values:
                 - '5.7'
+                - '8'
             - env_var: NODEJS_VERSION
               values:
                 - '12'

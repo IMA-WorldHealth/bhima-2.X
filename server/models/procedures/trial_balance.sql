@@ -319,22 +319,23 @@ BEGIN
   DELETE FROM posting_journal WHERE record_uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
 
   -- Let specify that this invoice or the cash payment is posted
-  SELECT COUNT(uuid) INTO isInvoice  FROM invoice  WHERE invoice.uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
-  SELECT COUNT(uuid) INTO isCash  FROM cash  WHERE cash.uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
-  SELECT COUNT(uuid) INTO isVoucher  FROM voucher  WHERE voucher.uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
+  SELECT COUNT(uuid) INTO isInvoice FROM invoice WHERE invoice.uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
+  SELECT COUNT(uuid) INTO isCash FROM cash WHERE cash.uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
+  SELECT COUNT(uuid) INTO isVoucher FROM voucher WHERE voucher.uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
 
   IF isInvoice > 0 THEN
-    UPDATE invoice SET posted = 1 WHERE uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
+    UPDATE invoice SET posted = 1 WHERE EXISTS (SELECT 1 FROM stage_trial_balance_transaction t WHERE t.record_uuid = invoice.uuid);
   END IF;
 
   IF isCash > 0 THEN
-    UPDATE cash SET posted = 1 WHERE uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
+    UPDATE cash SET posted = 1 WHERE EXISTS (SELECT 1 FROM stage_trial_balance_transaction t WHERE t.record_uuid = cash.uuid);
   END IF;
 
   IF isVoucher > 0 THEN
-    UPDATE voucher SET posted = 1 WHERE uuid IN (SELECT record_uuid FROM stage_trial_balance_transaction);
+    UPDATE voucher SET posted = 1 WHERE EXISTS (SELECT 1 FROM stage_trial_balance_transaction t WHERE t.record_uuid = voucher.uuid);
   END IF;
 
+  /* DROP TEMPORARY TABLE stage_trial_balance_transaction; */
 END $$
 
 DELIMITER ;

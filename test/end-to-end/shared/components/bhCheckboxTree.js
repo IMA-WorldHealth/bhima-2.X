@@ -15,4 +15,11 @@ module.exports = {
     const tree = element(locator);
     return tree.$('[data-root-node]').click();
   },
+
+  isChecked(id) {
+    const locator = (id) ? by.id(id) : by.css(this.selector);
+    const tree = element(locator);
+    return tree.$('[data-root-node] input').isSelected();
+  },
+
 };

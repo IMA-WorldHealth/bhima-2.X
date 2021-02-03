@@ -57,8 +57,12 @@ class EmployeeConfigPage {
     await row.dropdown().click();
     await row.method('config').click();
 
-    // First click for select all
-    await components.bhCheckboxTree.toggleAllCheckboxes();
+    const isAllChecked = await components.bhCheckboxTree.isChecked();
+
+    if (!isAllChecked) {
+      // First click for select all
+      await components.bhCheckboxTree.toggleAllCheckboxes();
+    }
 
     // Second click for unselect all
     await components.bhCheckboxTree.toggleAllCheckboxes();
